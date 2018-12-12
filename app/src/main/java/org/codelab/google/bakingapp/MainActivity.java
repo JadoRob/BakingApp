@@ -19,29 +19,34 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerview;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private MainViewModel mMainViewModel;
+//    private RecyclerView mRecyclerview;
+//    private RecyclerView.Adapter mAdapter;
+//    private RecyclerView.LayoutManager mLayoutManager;
+//    private MainViewModel mMainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerview = findViewById(R.id.recyclerview);
-        mRecyclerview.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
 
-        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        RecipeFragment fragment = new RecipeFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
-        mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipes) {
-                mAdapter = new RecipeAdapter(recipes);
-                mRecyclerview.setLayoutManager(mLayoutManager);
-                mRecyclerview.setAdapter(mAdapter);
-            }
-        });
+
+        //        mRecyclerview = findViewById(R.id.recyclerview);
+//        mRecyclerview.setHasFixedSize(true);
+//        mLayoutManager = new LinearLayoutManager(this);
+//
+//        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+//
+//        mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
+//            @Override
+//            public void onChanged(@Nullable List<Recipe> recipes) {
+//                mAdapter = new RecipeAdapter(recipes);
+//                mRecyclerview.setLayoutManager(mLayoutManager);
+//                mRecyclerview.setAdapter(mAdapter);
+//            }
+//        });
 
     }
 }
