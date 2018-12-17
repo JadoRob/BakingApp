@@ -11,9 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import org.codelab.google.bakingapp.data.Recipe;
+import org.codelab.google.bakingapp.viewadapters.RecipeAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
 
 import java.util.List;
@@ -29,7 +29,6 @@ public class RecipeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.recipe_fragment, container, false);
-        TextView textView = v.findViewById(R.id.recipe_list);
 
         mMainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {

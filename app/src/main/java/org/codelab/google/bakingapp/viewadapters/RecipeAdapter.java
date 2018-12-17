@@ -1,20 +1,31 @@
-package org.codelab.google.bakingapp;
+package org.codelab.google.bakingapp.viewadapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import org.codelab.google.bakingapp.data.Recipe;
 
+import org.codelab.google.bakingapp.R;
+import org.codelab.google.bakingapp.data.Recipe;
 import java.util.List;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     private static final String TAG = RecipeAdapter.class.getSimpleName();
     private List<Recipe> mRecipeList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public static class RecipeViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImageView;
@@ -26,7 +37,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             mImageView = itemView.findViewById(R.id.imageView);
             mRecipeView = itemView.findViewById(R.id.textView);
             mTextview2 = itemView.findViewById(R.id.textView2);
-
 
         }
     }
@@ -81,6 +91,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             return image;
         }
         return R.drawable.default_image;
+    }
+
+    public void setRecipes(List<Recipe> recipeList) {
+        mRecipeList = recipeList;
+        notifyDataSetChanged();
     }
 
     @Override
