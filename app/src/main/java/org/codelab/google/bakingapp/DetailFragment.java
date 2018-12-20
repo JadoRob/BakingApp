@@ -13,43 +13,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
-import org.codelab.google.bakingapp.viewadapters.RecipeAdapter;
 import org.codelab.google.bakingapp.viewadapters.StepsAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
 
 import java.util.List;
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements StepsAdapter.OnItemClickListener {
 
     private static final String TAG = DetailFragment.class.getSimpleName();
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private StepsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private MainViewModel mMainViewModel;
+    private MainViewModel viewModel;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.detail_fragment, container, false);
         final TextView ingredients = v.findViewById(R.id.ingredients);
 
-        mMainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        viewModel.getCurrentRecipe().observe(this, new Observer<Recipe>() {
             @Override
-            public void onChanged(@Nullable List<Recipe> recipes) {
-                Recipe currentRecipe = recipes.get(0);
-                Log.i(TAG, "from onchanged of DetailFragment: " + currentRecipe.getName());
-                ingredients.setText(buildIngredients(currentRecipe.getIngredients()));
+            public void onChanged(@Nullable Recipe recipe) {
+                ingredients.setText(buildIngredients(recipe.getIngredients()));
                 mRecyclerView = getActivity().findViewById(R.id.recyclerview);
                 mLayoutManager = new LinearLayoutManager(getContext());
-                mAdapter = new StepsAdapter(recipes.get(0));
+                mAdapter = new StepsAdapter(recipe);
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
-
-
+                mAdapter.setOnItemClickListener(DetailFragment.this);
             }
         });
         return v;
@@ -67,4 +64,9 @@ public class DetailFragment extends Fragment {
 
     }
 
+    @Override
+    public void onItemClick(int position) {
+        viewModel.setCurrentStep(position);
+        viewModel.setList("steps");
+    }
 }

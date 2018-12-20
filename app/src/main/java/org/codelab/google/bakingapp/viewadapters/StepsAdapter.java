@@ -19,19 +19,13 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
     private Recipe mRecipe;
     private List<Ingredients> mIngredientList;
     private List<Steps> mSteps;
+    private OnItemClickListener mListener;
 
-    public static class StepViewHolder extends RecyclerView.ViewHolder {
-        private TextView mStepView;
-        private TextView mDescView;
-        private TextView mIngredientsView;
-
-        public StepViewHolder(View itemView) {
-            super(itemView);
-            mStepView = itemView.findViewById(R.id.step_name);
-            mDescView = itemView.findViewById(R.id.short_description);
-            //mIngredientsView = itemView.findViewById(R.id.ingredients_view);
-        }
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
+
+    public void setOnItemClickListener(OnItemClickListener listener) { mListener = listener; }
 
     public StepsAdapter(Recipe recipe) {
         mRecipe = recipe;
@@ -42,7 +36,8 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
     @NonNull
     @Override
     public StepViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.step_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.step_item, parent, false);
         StepViewHolder stepViewHolder = new StepViewHolder(v);
         return stepViewHolder;
     }
@@ -56,8 +51,29 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
     }
 
     @Override
-    public int getItemCount() {
-        return mSteps.size();
+    public int getItemCount() { return mSteps.size(); }
+
+    public class StepViewHolder extends RecyclerView.ViewHolder {
+        public TextView mStepView;
+        public TextView mDescView;
+
+        public StepViewHolder(View itemView) {
+            super(itemView);
+            mStepView = itemView.findViewById(R.id.step_name);
+            mDescView = itemView.findViewById(R.id.short_description);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            mListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+        }
     }
 
 }

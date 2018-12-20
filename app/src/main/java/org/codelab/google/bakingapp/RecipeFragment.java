@@ -11,27 +11,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Toast;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.viewadapters.RecipeAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
 
 import java.util.List;
 
-public class RecipeFragment extends Fragment {
+public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClickListener {
 
+    private static final String TAG = RecipeFragment.class.getSimpleName();
     private RecyclerView mRecyclerview;
-    private RecyclerView.Adapter mAdapter;
+    private RecipeAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private MainViewModel mMainViewModel;
+    private MainViewModel viewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.recipe_fragment, container, false);
-
-        mMainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        viewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
                 mRecyclerview = getActivity().findViewById(R.id.recyclerview);
@@ -39,9 +39,21 @@ public class RecipeFragment extends Fragment {
                 mAdapter = new RecipeAdapter(recipes);
                 mRecyclerview.setLayoutManager(mLayoutManager);
                 mRecyclerview.setAdapter(mAdapter);
+                mAdapter.setOnItemClickListener(RecipeFragment.this);
             }
         });
-
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        viewModel.setCurrentRecipe(position);
+        viewModel.setList("details");
     }
 }

@@ -21,28 +21,23 @@ import java.util.List;
 public class StepsFragment extends Fragment {
 
     private static final String TAG = DetailFragment.class.getSimpleName();
-    private MainViewModel mMainViewModel;
+    private MainViewModel viewModel;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.steps_fragment, container, false);
         final TextView instructions = v.findViewById(R.id.instructions);
 
-        mMainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        mMainViewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
             @Override
-            public void onChanged(@Nullable List<Recipe> recipes) {
-                Recipe currentRecipe = recipes.get(1);
-                List<Steps> steps = currentRecipe.getSteps();
-                Steps currentStep = steps.get(1);
-                Log.i(TAG, "from onchanged of DetailFragment: " + currentStep.getDescription());
-                instructions.setText(currentStep.getDescription());
-
+            public void onChanged(@Nullable Steps step) {
+                instructions.setText(step.getDescription());
             }
         });
-
         return v;
-
     }
 }
