@@ -2,13 +2,11 @@ package org.codelab.google.bakingapp.viewadapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import org.codelab.google.bakingapp.R;
-import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.Steps;
 
@@ -17,9 +15,9 @@ import java.util.List;
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHolder> {
     public static final String TAG = StepsAdapter.class.getSimpleName();
     private Recipe mRecipe;
-    private List<Ingredients> mIngredientList;
     private List<Steps> mSteps;
     private OnItemClickListener mListener;
+    Boolean mNoDescription;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -27,9 +25,9 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
 
     public void setOnItemClickListener(OnItemClickListener listener) { mListener = listener; }
 
-    public StepsAdapter(Recipe recipe) {
+    public StepsAdapter(Recipe recipe, Boolean checkForDescription) {
+        mNoDescription = checkForDescription;
         mRecipe = recipe;
-        mIngredientList = recipe.getIngredients();
         mSteps = recipe.getSteps();
     }
 
@@ -44,10 +42,24 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
 
     @Override
     public void onBindViewHolder(@NonNull StepViewHolder holder, int position) {
-        String shortDescription = mSteps.get(position).getShortDescription();
-        int stepNumber = mSteps.get(position).getId() + 1;
+        int number = mSteps.get(position).getId();
+        String stepIndex;
+        String shortDescription;
+        //displays short description at the start of the list if one is provided. If the default
+        //place holder exists, it only displays the recipe name.
+        if (position == 0) {
+            stepIndex = mRecipe.getName();
+            holder.mStepView.setText(stepIndex);
+            if (!mNoDescription) {
+                shortDescription = mSteps.get(position).getShortDescription();
+                holder.mDescView.setText(shortDescription);
+            }
+            return;
+        }
+        stepIndex = "Step: " + number;
+        shortDescription = mSteps.get(position).getShortDescription();
         holder.mDescView.setText(shortDescription);
-        holder.mStepView.setText("Step " + stepNumber + ":");
+        holder.mStepView.setText(stepIndex);
     }
 
     @Override

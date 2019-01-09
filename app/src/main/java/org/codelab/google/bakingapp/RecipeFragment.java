@@ -2,6 +2,7 @@ package org.codelab.google.bakingapp;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.viewadapters.RecipeAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
@@ -26,9 +26,17 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
     private RecyclerView.LayoutManager mLayoutManager;
     private MainViewModel viewModel;
 
+    //for communication with MainActivity
+    OnRecipeClickListener mCallback;
+
+    public interface OnRecipeClickListener {
+        void onRecipeSelected(int position);
+    }
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.recipe_fragment, container, false);
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         viewModel.getRecipeList().observe(this, new Observer<List<Recipe>>() {
@@ -51,9 +59,22 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
 
     }
 
+    //checks and confirms interface listener with the MainActivity
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnRecipeClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnRecipeClickListener");
+        }
+    }
+
     @Override
     public void onItemClick(int position) {
         viewModel.setCurrentRecipe(position);
-        viewModel.setList("details");
+        viewModel.select("details");
+        mCallback.onRecipeSelected(position);
     }
 }

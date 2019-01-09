@@ -8,13 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-
 import org.codelab.google.bakingapp.R;
 import org.codelab.google.bakingapp.data.Recipe;
 import java.util.List;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
-    private static final String TAG = RecipeAdapter.class.getSimpleName();
     private List<Recipe> mRecipeList;
     private OnItemClickListener mListener;
 
@@ -25,7 +23,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
-
     public RecipeAdapter(List<Recipe> recipeList) {
         mRecipeList = recipeList;
     }
@@ -53,6 +50,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.mTextview2.setText(servingSize.append(servings));
     }
 
+    //default images created for recipes
     private int defaultImage(Recipe recipe) {
         //check if no image is provided
         String food = recipe.getName();
@@ -76,11 +74,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             return image;
         }
         return R.drawable.default_image;
-    }
-
-    public void setRecipes(List<Recipe> recipeList) {
-        mRecipeList = recipeList;
-        notifyDataSetChanged();
     }
 
     @Override

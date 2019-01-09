@@ -1,47 +1,27 @@
 package org.codelab.google.bakingapp;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
-import org.codelab.google.bakingapp.data.Steps;
-import org.codelab.google.bakingapp.viewmodels.MainViewModel;
+public class MainActivity extends AppCompatActivity implements RecipeFragment.OnRecipeClickListener {
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private MainViewModel viewModel;
+    public static final String EXTRA_RECIPE = "Pass Recipe";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //RecipeFragment instantiated through activity_main.xml
         setContentView(R.layout.activity_main);
-
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-
-        final RecipeFragment recipeFragment = new RecipeFragment();
-        final StepsFragment stepsFragment = new StepsFragment();
-        final DetailFragment detailFragment = new DetailFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, recipeFragment).commit();
-
-        viewModel.getList().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                if (s.equals("details")) {
-                    transaction.replace(R.id.container, detailFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                } else if (s.equals("steps")) {
-                    transaction.replace(R.id.container, stepsFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-            }
-        });
+    }
+    //interface to receive callback from RecipeFragment to start the RecipeActivity with an
+    // associated ViewModel, to enable communication between the DetailFragment and StepsFragment. Position
+    //is used to pass the selected recipe.
+    @Override
+    public void onRecipeSelected(int position) {
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra(EXTRA_RECIPE, position);
+        startActivity(intent);
     }
 }

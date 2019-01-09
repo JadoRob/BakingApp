@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.Steps;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
 
-import java.util.List;
-
-
 public class StepsFragment extends Fragment {
 
-    private static final String TAG = DetailFragment.class.getSimpleName();
     private MainViewModel viewModel;
 
     @Nullable
@@ -30,14 +24,23 @@ public class StepsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.steps_fragment, container, false);
         final TextView instructions = v.findViewById(R.id.instructions);
+        final TextView stepTitle = v.findViewById(R.id.step_name);
 
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
             @Override
             public void onChanged(@Nullable Steps step) {
                 instructions.setText(step.getDescription());
+                stepTitle.setText(step.getShortDescription());
             }
         });
         return v;
+    }
+    //If the screen orientation changes, set the trigger in the ViewModel to show the Details
+    //fragment
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        viewModel.select("Details");
     }
 }

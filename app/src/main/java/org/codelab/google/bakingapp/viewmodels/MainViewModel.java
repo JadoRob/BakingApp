@@ -6,12 +6,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
-import org.codelab.google.bakingapp.MainActivity;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.RecipeRepository;
 import org.codelab.google.bakingapp.data.Steps;
-
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -21,37 +18,33 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Recipe>> mRecipeList;
     private MutableLiveData<Recipe> currentRecipe;
     private MutableLiveData<Steps> currentStep;
-    private MutableLiveData<String> change;
-
-
+    private MutableLiveData<String> selected;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         mRecipeRepository = RecipeRepository.getInstance(application);
+        //obtains the list of recipes from the repository
         mRecipeList = mRecipeRepository.getRecipeList();
         currentRecipe = new MutableLiveData<>();
         currentStep = new MutableLiveData<>();
-        change = new MutableLiveData<>();
-
-        change.setValue("test");
-        Log.i(TAG, "from MainViewModel constructor: " + change.getValue());
-
-
+        selected = new MutableLiveData<>();
+        selected.setValue("details");
+        Log.i(TAG, "from MainViewModel constructor: " + selected.getValue());
     }
 
     public void setCurrentStep(int position) {
-        String recipeName = currentRecipe.getValue().getName();
         List<Steps> steps = currentRecipe.getValue().getSteps();
         currentStep.setValue(steps.get(position));
-        Log.i(TAG, "from setCurrentStep in viewmodel: " + currentStep.getValue().getShortDescription());
+    }
+
+    public void setCurrentRecipe(int position) {
+        Recipe recipe;
+        recipe = mRecipeList.getValue().get(position);
+        currentRecipe.setValue(recipe);
     }
 
     public LiveData<Steps> getCurrentStep() {
         return currentStep;
-    }
-
-    public void setCurrentRecipe(int position) {
-        currentRecipe.setValue(mRecipeList.getValue().get(position));
     }
 
     public LiveData<Recipe> getCurrentRecipe() {
@@ -62,12 +55,23 @@ public class MainViewModel extends AndroidViewModel {
         return mRecipeList;
     }
 
-    public LiveData<String> getList() {
-        return change;
+    //used as a trigger for the fragments to determine what is displayed
+    public LiveData<String> getSelected() {
+        return selected;
     }
 
-    public void setList(String page) {
-        change.setValue(page);
+    public void select(String page) {
+        selected.setValue(page);
+    }
+
+    //checks for the default place holder, and returns true if it is using the default description.
+    public Boolean checkDefaultIntro(Recipe currentRecipe) {
+        final String DEFAULT_INTRO = "Recipe Introduction";
+        String recipeIntro = currentRecipe.getSteps().get(0).getDescription();
+        if (recipeIntro.equals(DEFAULT_INTRO)) {
+            return true;
+        }
+        return false;
     }
 
 
