@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Baking App</string>
+    <string name="baking_app_recipe">Baking App Recipe</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <color name="LightYellow">#FFFFE0</color>
+    <color name="Yellow">#FFFF00</color>
+    <color name="FloralWhite">#FFFAF0</color>
 </resources>

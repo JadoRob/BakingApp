@@ -25,8 +25,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
 
     public void setOnItemClickListener(OnItemClickListener listener) { mListener = listener; }
 
-    public StepsAdapter(Recipe recipe, Boolean checkForDescription) {
-        mNoDescription = checkForDescription;
+    public StepsAdapter(Recipe recipe) {
         mRecipe = recipe;
         mSteps = recipe.getSteps();
     }
@@ -48,12 +47,12 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
         //displays short description at the start of the list if one is provided. If the default
         //place holder exists, it only displays the recipe name.
         if (position == 0) {
-            stepIndex = mRecipe.getName();
+            stepIndex = "Recipe Introduction";
             holder.mStepView.setText(stepIndex);
-            if (!mNoDescription) {
-                shortDescription = mSteps.get(position).getShortDescription();
-                holder.mDescView.setText(shortDescription);
-            }
+//            if (!mNoDescription) {
+//                shortDescription = mSteps.get(position).getShortDescription();
+//                holder.mDescView.setText(shortDescription);
+//            }
             return;
         }
         stepIndex = "Step: " + number;

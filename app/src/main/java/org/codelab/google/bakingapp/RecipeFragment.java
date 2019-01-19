@@ -3,6 +3,7 @@ package org.codelab.google.bakingapp;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,11 +27,11 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
     private RecyclerView.LayoutManager mLayoutManager;
     private MainViewModel viewModel;
 
-    //for communication with MainActivity
+    //for communication with MainActivity or RecipeWidgetConfig
     OnRecipeClickListener mCallback;
 
     public interface OnRecipeClickListener {
-        void onRecipeSelected(int position);
+        void onRecipeSelected(int position, String recipeName);
     }
 
     @Nullable
@@ -73,8 +74,16 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
 
     @Override
     public void onItemClick(int position) {
+        String recipeName;
         viewModel.setCurrentRecipe(position);
         viewModel.select("details");
-        mCallback.onRecipeSelected(position);
+        recipeName = viewModel.getCurrentRecipeName();
+        mCallback.onRecipeSelected(position, recipeName);
+
+        SharedPreferences prefs = getActivity()
+                .getSharedPreferences("Values", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(recipeName, "recipeName");
+        editor.apply();
     }
 }

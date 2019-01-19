@@ -4,32 +4,48 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.RecipeRepository;
 import org.codelab.google.bakingapp.data.Steps;
+
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
     private RecipeRepository mRecipeRepository;
+    //used to store ingredients for the widget;
+    private List<Ingredients> recipeIngredients;
     private LiveData<List<Recipe>> mRecipeList;
     private MutableLiveData<Recipe> currentRecipe;
     private MutableLiveData<Steps> currentStep;
     private MutableLiveData<String> selected;
+    //no longer relevant, remove this and putExtra from
+    private boolean returnToWidget;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         mRecipeRepository = RecipeRepository.getInstance(application);
         //obtains the list of recipes from the repository
         mRecipeList = mRecipeRepository.getRecipeList();
+        //this is also used to update the widget ingredients
         currentRecipe = new MutableLiveData<>();
         currentStep = new MutableLiveData<>();
         selected = new MutableLiveData<>();
         selected.setValue("details");
         Log.i(TAG, "from MainViewModel constructor: " + selected.getValue());
+        //purge the previous ingredient list for a new one to be displayed for the widget
+        mRecipeRepository.deleteAllIngredients();
+    }
+
+    public void setWidgetIngredientList() {
+        //purge previous list
+
     }
 
     public void setCurrentStep(int position) {
@@ -41,6 +57,20 @@ public class MainViewModel extends AndroidViewModel {
         Recipe recipe;
         recipe = mRecipeList.getValue().get(position);
         currentRecipe.setValue(recipe);
+        //saves the list of ingredients for the widget
+        List<Ingredients> ingredients = recipe.getIngredients();
+        Log.i(TAG, "ingredients size: " + ingredients.size());
+        if (ingredients != null) {
+            for (int i = 0; i < ingredients.size(); i++) {
+                mRecipeRepository.insert(ingredients.get(i));
+            }
+        } else {
+            Log.i(TAG, "Ingredients is null!");
+        }
+    }
+
+    public void checkLaunchedFromWidget(boolean returnToWidget) {
+        this.returnToWidget = returnToWidget;
     }
 
     public LiveData<Steps> getCurrentStep() {
@@ -64,15 +94,22 @@ public class MainViewModel extends AndroidViewModel {
         selected.setValue(page);
     }
 
-    //checks for the default place holder, and returns true if it is using the default description.
-    public Boolean checkDefaultIntro(Recipe currentRecipe) {
-        final String DEFAULT_INTRO = "Recipe Introduction";
-        String recipeIntro = currentRecipe.getSteps().get(0).getDescription();
-        if (recipeIntro.equals(DEFAULT_INTRO)) {
-            return true;
-        }
-        return false;
+    public String getCurrentRecipeName() {
+        return currentRecipe.getValue().getName();
     }
+
+    //returns ingredients for the widget
+    public List<Ingredients> getIngredients() {
+        recipeIngredients = currentRecipe.getValue().getIngredients();
+        return recipeIngredients;
+    }
+
+    public void updateWidget(Context context) {
+        Intent intent = new Intent();
+
+    }
+
+
 
 
 

@@ -40,11 +40,10 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
         viewModel.getCurrentRecipe().observe(this, new Observer<Recipe>() {
             @Override
             public void onChanged(@Nullable Recipe recipe) {
-                Boolean recipeIntro = viewModel.checkDefaultIntro(recipe);
                 ingredients.setText(buildIngredients(recipe.getIngredients()));
                 mRecyclerView = getActivity().findViewById(R.id.recyclerview);
                 mLayoutManager = new LinearLayoutManager(getContext());
-                mAdapter = new StepsAdapter(recipe, recipeIntro);
+                mAdapter = new StepsAdapter(recipe);
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.setOnItemClickListener(DetailFragment.this);
@@ -66,10 +65,8 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
     @Override
     public void onItemClick(int position) {
         viewModel.setCurrentStep(position);
-        //will not trigger viewModel to update the fragment if the first item (name/description) on
-        // the steps list is clicked.
-        if (position != 0) {
-            viewModel.select("steps");
-        }
+        viewModel.select("steps");
+
     }
+
 }
