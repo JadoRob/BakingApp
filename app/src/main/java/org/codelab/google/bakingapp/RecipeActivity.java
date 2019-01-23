@@ -14,6 +14,7 @@ import static org.codelab.google.bakingapp.MainActivity.EXTRA_RECIPE;
 public class RecipeActivity extends AppCompatActivity {
 
     boolean returnToWidget = false;
+    MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +28,13 @@ public class RecipeActivity extends AppCompatActivity {
         // steps list
         fragmentManager.popBackStack();
 
-        final MainViewModel viewModel;
+
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.setCurrentRecipe(position);
         viewModel.setWidgetIngredientList();
         viewModel.checkLaunchedFromWidget(returnToWidget);
 
         //Sets up the trigger in ViewModel to determine which fragment will show.
-        viewModel.select("details");
         viewModel.getSelected().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String selected) {
@@ -48,6 +48,7 @@ public class RecipeActivity extends AppCompatActivity {
                     //checks to see if the tablet/landscape xml is used and displays the steps on
                     //the view to the right.
                     if (findViewById(R.id.tablet_landscape) != null) {
+                        transaction.addToBackStack(null);
                         transaction.replace(R.id.dual_container, stepsFragment).commit();
                     } else {
                         transaction.addToBackStack(null);
@@ -58,10 +59,13 @@ public class RecipeActivity extends AppCompatActivity {
         });
 
     }
-
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (viewModel.getSelected().getValue().equals("steps")) {
+            viewModel.select("details");
+        }
 
     }
+
 }

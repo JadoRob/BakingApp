@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +27,19 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
     private StepsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainViewModel viewModel;
+    private static final String TAG = DetailFragment.class.getSimpleName();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.detail_fragment, container, false);
+
         final TextView ingredients = v.findViewById(R.id.ingredients);
 
         //instantiate ViewModel from the associated activity (RecipeActivity)
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        Log.i(TAG, "from onCreate: " + viewModel.getSelected().getValue());
         //get the chosen recipe and populate the list adapter using LiveData
         viewModel.getCurrentRecipe().observe(this, new Observer<Recipe>() {
             @Override

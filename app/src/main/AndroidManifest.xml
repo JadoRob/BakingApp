@@ -22,7 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeActivity" />
+        <activity android:name=".RecipeActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"
+            />
 
         <meta-data
             android:name="preloaded_fonts"
