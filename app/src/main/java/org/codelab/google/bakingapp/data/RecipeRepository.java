@@ -1,5 +1,4 @@
 package org.codelab.google.bakingapp.data;
-
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -9,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
 import org.codelab.google.bakingapp.network.JsonRecipes;
 import java.util.List;
 import retrofit2.Call;
@@ -17,7 +15,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 public class RecipeRepository {
 
     private static RecipeRepository instance;
@@ -47,7 +44,7 @@ public class RecipeRepository {
         context = application;
         cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = cm.getActiveNetworkInfo();
-        internetAccess = networkInfo != null && networkInfo.isConnectedOrConnecting();
+        internetAccess = networkInfo != null && networkInfo.isConnected();
 
         if (!internetAccess) {
             Toast.makeText(context, "Unable to access internet.", Toast.LENGTH_SHORT).show();

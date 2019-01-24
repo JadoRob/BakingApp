@@ -12,14 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
 import org.codelab.google.bakingapp.data.Steps;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
 
@@ -39,6 +42,7 @@ public class StepsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView triggered!");
         View v = inflater.inflate(R.layout.steps_fragment, container, false);
         final TextView instructions = v.findViewById(R.id.instructions);
         final TextView stepTitle = v.findViewById(R.id.step_name);
@@ -53,7 +57,6 @@ public class StepsFragment extends Fragment {
                 if (step.getVideoURL().equals("")) {
                     playerView.setVisibility(View.INVISIBLE);
                 }
-
                 instructions.setText(step.getDescription());
                 stepTitle.setText(step.getShortDescription());
             }
@@ -61,16 +64,24 @@ public class StepsFragment extends Fragment {
         return v;
     }
 
-    private void initializePlayer(String url) {
-        player = ExoPlayerFactory.newSimpleInstance(getActivity());
-        playerView.setPlayer(player);
-        player.setPlayWhenReady(playWhenReady);
-        player.seekTo(currentWindow, playbackPosition);
-        MediaSource mediaSource = buildMediaSource(Uri.parse(url));
-        player.prepare(mediaSource, true, false);
+    private void initializePlayer() {
+        viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
+            @Override
+            public void onChanged(@Nullable Steps steps) {
+                if (steps != null && !steps.getVideoURL().equals("")) {
+                    Log.i(TAG, "Initialized!");
+                    player = ExoPlayerFactory.newSimpleInstance(getActivity(),
+                            new DefaultRenderersFactory(getActivity()),
+                            new DefaultTrackSelector(), new DefaultLoadControl());
 
-
-
+                    playerView.setPlayer(player);
+                    player.setPlayWhenReady(playWhenReady);
+                    player.seekTo(currentWindow, playbackPosition);
+                    MediaSource mediaSource = buildMediaSource(Uri.parse(steps.getVideoURL()));
+                    player.prepare(mediaSource, true, false);
+                }
+            }
+        });
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -82,32 +93,17 @@ public class StepsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
-            @Override
-            public void onChanged(@Nullable Steps steps) {
-                if (Util.SDK_INT > 23) {
-                    if (steps != null) {
-                        initializePlayer(steps.getVideoURL());
-                        Log.i(TAG, "video url: " + steps.getVideoURL());
-                    }
-                }
-            }
-        });
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
-            @Override
-            public void onChanged(@Nullable Steps steps) {
-                if ((Util.SDK_INT <= 23 || player == null)) {
-                    if (steps != null) {
-                        initializePlayer(steps.getVideoURL());
-                    }
-                }
-            }
-        });
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            initializePlayer();
+        }
     }
 
     @Override
@@ -127,6 +123,7 @@ public class StepsFragment extends Fragment {
     }
 
     private void releasePlayer() {
+        Log.i(TAG, "releasing player");
         if (player != null) {
             playbackPosition = player.getCurrentPosition();
             currentWindow = player.getCurrentWindowIndex();

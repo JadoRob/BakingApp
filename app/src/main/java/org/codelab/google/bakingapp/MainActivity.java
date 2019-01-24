@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity implements RecipeFragment.On
         super.onCreate(savedInstanceState);
         //RecipeFragment instantiated through activity_main.xml
         setContentView(R.layout.activity_main);
-
     }
     //interface to receive callback from RecipeFragment to start the RecipeActivity with an
     // associated ViewModel, to enable communication between the DetailFragment and StepsFragment. Position
@@ -25,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements RecipeFragment.On
     public void onRecipeSelected(int position, String recipeName) {
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.putExtra(EXTRA_RECIPE, position);
+        //if a new list is needed from the widget, this passes the name and tells it to update
+        //the ingredient list
         RecipeAppWidgetProvider.sendRefresh(getApplicationContext(), recipeName);
         Log.i(TAG, "onRecipeSelected: " + recipeName);
         startActivity(intent);
