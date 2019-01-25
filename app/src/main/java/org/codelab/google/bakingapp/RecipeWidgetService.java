@@ -14,7 +14,6 @@ import org.codelab.google.bakingapp.data.IngredientsDatabase;
 import java.util.List;
 
 public class RecipeWidgetService extends RemoteViewsService {
-
     private static final String TAG = RecipeWidgetService.class.getSimpleName();
     private List<Ingredients> ingredients;
 
@@ -24,7 +23,6 @@ public class RecipeWidgetService extends RemoteViewsService {
     }
 
     class RecipeWidgetIngredientFactory implements RemoteViewsFactory {
-
         private Context context;
         //used if there are multiple widgets
         private int appWidgetId;
@@ -49,7 +47,6 @@ public class RecipeWidgetService extends RemoteViewsService {
         //fetch data and update the list view, also refreshes data when a change is recieved
         @Override
         public void onDataSetChanged() {
-
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     R.layout.recipe_widget_item);
             views.setCharSequence(R.id.example_widget_button, "setText", recipeName);

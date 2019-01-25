@@ -12,7 +12,6 @@ import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.RecipeRepository;
 import org.codelab.google.bakingapp.data.Steps;
-
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -25,6 +24,7 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<Recipe> currentRecipe;
     private MutableLiveData<Steps> currentStep;
     private MutableLiveData<String> selected;
+    private long playbackPosition = 0;
     //no longer relevant, remove this and putExtra from
     private boolean returnToWidget;
 
@@ -49,6 +49,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void setCurrentStep(int position) {
+        //resets the playback position for any videos that was previously played
+        playbackPosition = 0;
         List<Steps> steps = currentRecipe.getValue().getSteps();
         currentStep.setValue(steps.get(position));
     }
@@ -107,6 +109,14 @@ public class MainViewModel extends AndroidViewModel {
     public void updateWidget(Context context) {
         Intent intent = new Intent();
 
+    }
+
+    public void setPlaybackPosition(long position) {
+        this.playbackPosition = position;
+    }
+
+    public long getPlaybackPosition() {
+        return playbackPosition;
     }
 
 

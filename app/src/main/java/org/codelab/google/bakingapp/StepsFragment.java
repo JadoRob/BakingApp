@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -36,7 +35,6 @@ public class StepsFragment extends Fragment {
     private boolean playWhenReady;
     private static final String TAG = StepsFragment.class.getSimpleName();
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,7 +46,6 @@ public class StepsFragment extends Fragment {
         final TextView stepTitle = v.findViewById(R.id.step_name);
         playerView = v.findViewById(R.id.video_view);
         playWhenReady = true;
-
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         Log.i(TAG, "from onCreate: " + viewModel.getSelected().getValue());
         viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
@@ -63,7 +60,6 @@ public class StepsFragment extends Fragment {
         });
         return v;
     }
-
     private void initializePlayer() {
         viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
             @Override
@@ -83,13 +79,11 @@ public class StepsFragment extends Fragment {
             }
         });
     }
-
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource
                 .Factory(new DefaultHttpDataSourceFactory("exoplayer"))
                 .createMediaSource(uri);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -97,7 +91,6 @@ public class StepsFragment extends Fragment {
             initializePlayer();
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -105,7 +98,6 @@ public class StepsFragment extends Fragment {
             initializePlayer();
         }
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -113,7 +105,6 @@ public class StepsFragment extends Fragment {
             releasePlayer();
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -121,7 +112,6 @@ public class StepsFragment extends Fragment {
             releasePlayer();
         }
     }
-
     private void releasePlayer() {
         Log.i(TAG, "releasing player");
         if (player != null) {

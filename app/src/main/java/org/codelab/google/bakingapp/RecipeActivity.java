@@ -15,8 +15,8 @@ import static org.codelab.google.bakingapp.MainActivity.EXTRA_RECIPE;
 public class RecipeActivity extends AppCompatActivity {
 
     boolean returnToWidget = false;
-    MainViewModel viewModel;
     private static final String TAG = RecipeActivity.class.getSimpleName();
+    MainViewModel viewModel;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -32,7 +32,6 @@ public class RecipeActivity extends AppCompatActivity {
         viewModel.setCurrentRecipe(position);
         viewModel.setWidgetIngredientList();
         viewModel.checkLaunchedFromWidget(returnToWidget);
-
         //Sets up the trigger in ViewModel to determine which fragment will show.
         viewModel.getSelected().observe(this, new Observer<String>() {
             @Override

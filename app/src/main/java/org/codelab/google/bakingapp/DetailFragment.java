@@ -2,7 +2,6 @@ package org.codelab.google.bakingapp;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.viewadapters.StepsAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
-
 import java.util.List;
 
 public class DetailFragment extends Fragment implements StepsAdapter.OnItemClickListener {
@@ -34,9 +32,7 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.detail_fragment, container, false);
-
         final TextView ingredients = v.findViewById(R.id.ingredients);
-
         //instantiate ViewModel from the associated activity (RecipeActivity)
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         Log.i(TAG, "from onCreate: " + viewModel.getSelected().getValue());
@@ -55,7 +51,6 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
         });
         return v;
     }
-
     //creates and returns a string with the list of ingredients
     private String buildIngredients(List<Ingredients> ingredients) {
         StringBuilder makeList = new StringBuilder();
@@ -70,7 +65,5 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
     public void onItemClick(int position) {
         viewModel.setCurrentStep(position);
         viewModel.select("steps");
-
     }
-
 }

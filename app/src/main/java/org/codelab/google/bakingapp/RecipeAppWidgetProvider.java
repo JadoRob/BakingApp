@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import static org.codelab.google.bakingapp.RecipeWidgetConfig.KEY_BUTTON_TEXT;
 import static org.codelab.google.bakingapp.RecipeWidgetConfig.SHARED_PREFS;
 
@@ -61,15 +60,12 @@ public class RecipeAppWidgetProvider extends AppWidgetProvider {
             ComponentName componentName = new ComponentName(context, RecipeAppWidgetProvider.class);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(componentName),
                     R.id.recipe_widget_list_view);
-
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
             views.setCharSequence(R.id.example_widget_button, "setText", recipeName);
-
             appWidgetManager.updateAppWidget(componentName, views);
         }
         super.onReceive(context, intent);
     }
-
     public static void sendRefresh(Context context, String recipeName) {
         Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         Log.i(TAG, "from sendRefresh method: " + recipeName);

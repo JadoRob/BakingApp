@@ -14,12 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.viewadapters.RecipeAdapter;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
-
 import java.util.List;
 
 public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClickListener {
@@ -29,7 +26,6 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
     private RecipeAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainViewModel viewModel;
-
     //for communication with MainActivity to pass position of recipe selected and open
     //the screen with recipe details (RecipeActivity)
     OnRecipeClickListener mCallback;
@@ -37,7 +33,6 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
     public interface OnRecipeClickListener {
         void onRecipeSelected(int position, String recipeName);
     }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -64,7 +59,6 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
         super.onActivityCreated(savedInstanceState);
 
     }
-
     //checks and confirms interface listener with the MainActivity
     @Override
     public void onAttach(Context context) {
@@ -90,6 +84,5 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnItemClic
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(recipeName, "recipeName");
         editor.apply();
-        
     }
 }

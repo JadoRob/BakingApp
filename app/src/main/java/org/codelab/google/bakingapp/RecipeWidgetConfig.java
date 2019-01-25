@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.viewmodels.MainViewModel;
-
 import java.util.List;
 
 public class RecipeWidgetConfig extends AppCompatActivity implements RecipeFragment.OnRecipeClickListener {
@@ -21,7 +20,6 @@ public class RecipeWidgetConfig extends AppCompatActivity implements RecipeFragm
 
     //Once widget is created, the app widget ID will be passed here
     private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-
     private List<Ingredients> ingredients;
     private String recipeName;
     private MainViewModel viewModel;
@@ -32,7 +30,6 @@ public class RecipeWidgetConfig extends AppCompatActivity implements RecipeFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_widget_config);
-
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
         //retrieve the widget ID using intent and pass to appWidgetId
@@ -52,19 +49,15 @@ public class RecipeWidgetConfig extends AppCompatActivity implements RecipeFragm
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
-
         RecipeFragment recipeFragment = new RecipeFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, recipeFragment).commit();
-
     }
 
         public void confirmConfiguration(String recipeName, List<Ingredients> ingredients) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
         Intent serviceIntent = new Intent(this, RecipeWidgetService.class);
         serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -74,7 +67,6 @@ public class RecipeWidgetConfig extends AppCompatActivity implements RecipeFragm
         views.setOnClickPendingIntent(R.id.example_widget_button, pendingIntent);
         views.setCharSequence(R.id.example_widget_button, "setText", recipeName);
         views.setRemoteAdapter(R.id.recipe_widget_list_view, serviceIntent);
-
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
         Intent resultValue = new Intent();
