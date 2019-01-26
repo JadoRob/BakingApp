@@ -12,6 +12,8 @@ import org.codelab.google.bakingapp.data.Ingredients;
 import org.codelab.google.bakingapp.data.Recipe;
 import org.codelab.google.bakingapp.data.RecipeRepository;
 import org.codelab.google.bakingapp.data.Steps;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -25,6 +27,8 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<Steps> currentStep;
     private MutableLiveData<String> selected;
     private long playbackPosition = 0;
+    private List<String> recipeVideos;
+
     //no longer relevant, remove this and putExtra from
     private boolean returnToWidget;
 
@@ -59,6 +63,7 @@ public class MainViewModel extends AndroidViewModel {
         Recipe recipe;
         recipe = mRecipeList.getValue().get(position);
         currentRecipe.setValue(recipe);
+        recipeVideos = new ArrayList<>();
         //saves the list of ingredients for the widget
         List<Ingredients> ingredients = recipe.getIngredients();
         Log.i(TAG, "ingredients size: " + ingredients.size());
@@ -68,6 +73,12 @@ public class MainViewModel extends AndroidViewModel {
             }
         } else {
             Log.i(TAG, "Ingredients is null!");
+        }
+        //gets all the videos of the current recipe and passes to recipeVideos
+        for (int i = 0; i < currentRecipe.getValue().getSteps().size(); i++) {
+            List<Steps> steps = currentRecipe.getValue().getSteps();
+            Log.i(TAG, "Recipe video: " + steps.get(i).getVideoURL());
+            recipeVideos.add(steps.get(i).getVideoURL());
         }
     }
 
@@ -106,11 +117,6 @@ public class MainViewModel extends AndroidViewModel {
         return recipeIngredients;
     }
 
-    public void updateWidget(Context context) {
-        Intent intent = new Intent();
-
-    }
-
     public void setPlaybackPosition(long position) {
         this.playbackPosition = position;
     }
@@ -118,10 +124,4 @@ public class MainViewModel extends AndroidViewModel {
     public long getPlaybackPosition() {
         return playbackPosition;
     }
-
-
-
-
-
-
 }

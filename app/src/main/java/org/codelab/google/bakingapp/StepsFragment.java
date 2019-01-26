@@ -29,55 +29,51 @@ public class StepsFragment extends Fragment {
 
     private MainViewModel viewModel;
     private SimpleExoPlayer player;
-    private long playbackPosition;
     private int currentWindow;
     private PlayerView playerView;
     private boolean playWhenReady;
     private static final String TAG = StepsFragment.class.getSimpleName();
+    public static final String EXO_PLAYBACK = "video playback position";
+    private String video = "";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView triggered!");
         View v = inflater.inflate(R.layout.steps_fragment, container, false);
         final TextView instructions = v.findViewById(R.id.instructions);
         final TextView stepTitle = v.findViewById(R.id.step_name);
         playerView = v.findViewById(R.id.video_view);
         playWhenReady = true;
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        Log.i(TAG, "from onCreate: " + viewModel.getSelected().getValue());
         viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
             @Override
             public void onChanged(@Nullable Steps step) {
+                video = step.getVideoURL();
                 if (step.getVideoURL().equals("")) {
                     playerView.setVisibility(View.INVISIBLE);
                 }
                 instructions.setText(step.getDescription());
                 stepTitle.setText(step.getShortDescription());
+                releasePlayer();
             }
         });
         return v;
     }
     private void initializePlayer() {
-        viewModel.getCurrentStep().observe(this, new Observer<Steps>() {
-            @Override
-            public void onChanged(@Nullable Steps steps) {
-                if (steps != null && !steps.getVideoURL().equals("")) {
-                    Log.i(TAG, "Initialized!");
-                    player = ExoPlayerFactory.newSimpleInstance(getActivity(),
-                            new DefaultRenderersFactory(getActivity()),
-                            new DefaultTrackSelector(), new DefaultLoadControl());
+        Log.i(TAG, "initializing!" );
+        if (!video.equals("")) {
+            player = ExoPlayerFactory.newSimpleInstance(getActivity(),
+                    new DefaultRenderersFactory(getActivity()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+            playerView.setPlayer(player);
+            player.setPlayWhenReady(playWhenReady);
+            player.seekTo(currentWindow, viewModel.getPlaybackPosition());
 
-                    playerView.setPlayer(player);
-                    player.setPlayWhenReady(playWhenReady);
-                    player.seekTo(currentWindow, playbackPosition);
-                    MediaSource mediaSource = buildMediaSource(Uri.parse(steps.getVideoURL()));
-                    player.prepare(mediaSource, true, false);
-                }
-            }
-        });
+            MediaSource mediaSource = buildMediaSource(Uri.parse(video));
+            player.prepare(mediaSource, false, true);
+        }
     }
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource
@@ -115,7 +111,7 @@ public class StepsFragment extends Fragment {
     private void releasePlayer() {
         Log.i(TAG, "releasing player");
         if (player != null) {
-            playbackPosition = player.getCurrentPosition();
+            viewModel.setPlaybackPosition(player.getCurrentPosition());
             currentWindow = player.getCurrentWindowIndex();
             playWhenReady = player.getPlayWhenReady();
             player.release();

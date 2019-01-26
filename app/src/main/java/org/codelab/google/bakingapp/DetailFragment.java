@@ -65,5 +65,7 @@ public class DetailFragment extends Fragment implements StepsAdapter.OnItemClick
     public void onItemClick(int position) {
         viewModel.setCurrentStep(position);
         viewModel.select("steps");
+        viewModel.setPlaybackPosition(0);
+        Log.i(TAG, "from onItemClick" + viewModel.getPlaybackPosition());
     }
 }
